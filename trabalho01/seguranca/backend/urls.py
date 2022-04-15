@@ -20,5 +20,7 @@ from backend.core import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name="home"),
-    path('generate/', views.index, name="gerar_chave"),
+    path('gerarChave/', views.gerar_chaves, name="gerarChave"),
+    path('assinar/', views.assinar, name="assinar"),
+    path('verificar_assinatura/', views.verificar, name="verificar"),
 ]

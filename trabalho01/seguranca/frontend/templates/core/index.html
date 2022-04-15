@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -6,163 +5,125 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+      integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
       crossorigin="anonymous"
     />
-    <title>Assinador</title>
+    <title>{{ title }}</title>
   </head>
+  <body>
+    <div class="container">
+      <form class="gerar_chaves" method="post" action="gerarChave/">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Chave Pública</label>
+          <textarea
+            class="form-control"
+            id="exampleFormControlTextarea1"
+            rows="3"
+            disabled
+          >
+{{chavepublica}}</textarea
+          >
+        </div>
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Chave Privada</label>
+          <textarea
+            class="form-control"
+            id="exampleFormControlTextarea1"
+            rows="3"
+            disabled
+          >
+{{ chaveprivada }}</textarea
+          >
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Gerar Chave</button>
+      </form>
 
-  <body class="bg-info">
+      {% if chavepublica %}
+      <form action="assinar/" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="exampleFormControlSelect1">Escolha a versão do SHA</label>
+          <select
+            class="form-control"
+            name="exampleFormControlSelect1"
+            id="exampleFormControlSelect1"
+          >
+            <option>SHA512</option>
+            <option>SHA384</option>
+            <option>SHA256</option>
+            <option>SHA224</option>
+            <option>SHA1</option>
+            <option>MD5</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="exampleFormControlTextarea12">Texto</label>
+          <textarea
+            class="form-control"
+            name="exampleFormControlTextarea12"
+            id="exampleFormControlTextarea12"
+            rows="3"
+            required
+          ></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">
+          Assinar texto
+        </button>
+      </form>
 
-    <div id="layoutAuthentication">
-      <div id="layoutAuthentication_content">
-        <main>
-          <div class="container">
-            <div class="row justify-content-center">
-              <div class="col-lg-7">
-                <div class="card shadow-lg border-0 rounded-lg mt-5">
-                  <div class="card-header">
-                    <h3 class="text-center font-weight-light my-4">
-                      Assinador de Mensagem
-                    </h3>
-                  </div>
-                  <div class="card-body">
-                    <form action="{% url 'gerar_chave' %}" method="POST" enctype="multipart/form-data">
-                      {% csrf_token %}
-                      <div class="form-group">
-                        <label for="chaveprivada">Chave Privada</label>
-                        <textarea name="chaveprivada" class="form-control" id="chaveprivada" rows="3" deactivate>{{chaveprivada}}</textarea>
-                      </div>
-                      <div class="form-group">
-                        <label for="chavepublica">Chave Pública</label>
-                        <textarea name="chavepublica" class="form-control" id="chavepublica" rows="3" deactivate>{{chavepublica}}</textarea>
-                      </div>
-                      <button class="btn btn-primary mb-3" type="submit" >Gerar Chaves</button>
-
-                      <a
-                        id="baixarchaveprivada"
-                        class="btn btn-primary mb-3"
-                        download="chavePrivada.txt"
-                        hidden
-                        >Baixar Chave Privada</a
-                      >
-                      <a
-                        id="baixarchavepublica"
-                        class="btn btn-primary mb-3"
-                        download="chavePublica.txt"
-                        hidden
-                        >Baixar Chave Pública</a
-                      >
-                      <p>O que você deseja assinar?</p>
-                      <div
-                        class="custom-control custom-radio custom-control-inline mb-3"
-                      >
-                        <input
-                          type="radio"
-                          id="assinartexto"
-                          name="tipoassinatura"
-                          class="custom-control-input"
-                          onclick="tipoAssinatura('texto')"
-                          value="texto"
-                          required
-                        />
-                        <label class="custom-control-label" for="assinartexto"
-                          >Texto</label
-                        >
-                      </div>
-                      <div
-                        class="custom-control custom-radio custom-control-inline mb-3"
-                      >
-                        <input
-                          type="radio"
-                          id="assinararquivo"
-                          name="tipoassinatura"
-                          class="custom-control-input"
-                          onclick="tipoAssinatura('arquivo')"
-                          value="arquivo"
-                          required
-                        />
-                        <label class="custom-control-label" for="assinararquivo"
-                          >Arquivo</label
-                        >
-                      </div>
-                      <div class="form-group" hidden>
-                        <label for="texto">Texto</label>
-                        <textarea
-                          name="texto"
-                          class="form-control"
-                          id="texto"
-                          rows="3"
-                        ></textarea>
-                      </div>
-                      <div class="custom-file" hidden>
-                        <input
-                          name="arquivo"
-                          type="file"
-                          class="custom-file-input"
-                          id="arquivo"
-                        />
-                        <label class="custom-file-label" for="arquivo"
-                          >Escolha o arquivo</label
-                        >
-                      </div>
-                      {% if sucesso == True %}
-                      <script>
-                        alert("Mensagem assinada com sucesso.");
-                      </script>
-                      <div class="form-group">
-                        <label for="mensagemassinada">Mensagem Assinada</label>
-                        <textarea
-                          name="mensagemassinada"
-                          class="form-control"
-                          id="mensagemassinada"
-                          rows="3"
-                        >
-{{mensagemassinada}}</textarea
-                        >
-                      </div>
-                      <a
-                        id="baixarmensagemassinada"
-                        class="btn btn-primary mb-3"
-                        download="mensagemAssinada.txt"
-                        href="data:text/plain;utf-8,{{mensagemassinada}}"
-                        >Baixar Mensagem Assinada</a
-                      >
-                      {% elif sucesso == False %}
-                      <script>
-                        alert(
-                          "Não foi possível assinar a mensagem. Por favor, tente novamente."
-                        );
-                      </script>
-                      {% endif %}
-                      <div class="form-group mt-4 mb-0">
-                        <button class="btn btn-primary btn-block" type="submit">
-                          Assinar Mensagem
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="card-footer text-center">
-                    <div class="small">
-                      <a href="#">Verificar Assinatura</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
+      {% endif %} {% if assinatura %}
+      <div class="form-group">
+        <label for="exampleFormControlTextarea3">Assinatura</label>
+        <textarea
+          class="form-control"
+          id="exampleFormControlTextarea3"
+          rows="3"
+          disabled
+        >
+{{ assinatura }}</textarea
+        >
       </div>
+      {% endif %}
 
+      <a href="{% url 'verificar' %}" class="btn btn-primary mb-2"
+        >Verificar Assinatura</a
+      >
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    <!-- JS do Bootstrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
       crossorigin="anonymous"
     ></script>
 
-    <script src="{% static 'js/scripts.js' %}"></script>
+    <script>
+      // a = document.getElementsByTagName("option")
+      // a[1].setAttribute("selected", "selected")
+
+
+      $(document).ready(function() {
+        if("{{ sha }}" != "" && "{{chavepublica}" != ""){
+          op = document.getElementsByTagName("option")
+          for(let i = 0; i < op.length; i++){
+            if(op[i].value == "{{ sha }}"){
+              op[i].setAttribute("selected", "selected")
+            }
+            op[i].setAttribute("disabled", "disabled")
+          }
+          document.getElementById("exampleFormControlTextarea12").setAttribute("disabled", "disabled")
+          document.getElementsByTagName("select")[0].setAttribute("disabled", "disabled")
+        }
+      })
+
+    </script>
   </body>
 </html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+      integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
+      crossorigin="anonymous"
+    />
+    <title>{{ title }}</title>
+  </head>
+  <body>
+    <div class="container">
+        <form class="gerar_chaves" method="post" >
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label for="exampleFormControlTextarea1">Chave Pública</label>
+              <textarea
+                class="form-control"
+                id="exampleFormControlTextarea1"
+                rows="3"
+                name="exampleFormControlTextarea1"
+              ></textarea
+              >
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlTextarea12">Texto</label>
+                <textarea
+                  class="form-control"
+                  name="exampleFormControlTextarea12"
+                  id="exampleFormControlTextarea12"
+                  rows="3"
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlTextarea3">Assinatura</label>
+                <textarea class="form-control" id="exampleFormControlTextarea3" name="exampleFormControlTextarea3" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Escolha a versão do SHA</label>
+                <select class="form-control" name="exampleFormControlSelect1" id="exampleFormControlSelect1">
+                  <option>SHA512</option>
+                  <option>SHA384</option>
+                  <option>SHA256</option>
+                  <option>SHA224</option>
+                  <option>SHA1</option>
+                  <option>MD5</option>
+                </select>
+            </div>
+              
+            <button type="submit" class="btn btn-primary mb-2">Verificar Assinatura</button>
+            <a href="{% url "home" %}" class="btn btn-primary mb-2">Voltar</a>
+          </form>
+
+
+          {% if tipo == 1 %}
+          <div class="alert alert-success" role="alert">
+            Assinatura validada
+          </div>
+          {% elif tipo == 2 %}
+          <div class="alert alert-danger" role="alert">
+            Assinatura Não validada
+          </div>
+          {% endif %}
+    </div>
+
+    <!-- JS do Bootstrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
